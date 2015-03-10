@@ -1,1 +1,0 @@
-java -cp /Users/simon/QuantumEquivalence/qpl/bin equivalence/Main $*

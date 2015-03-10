@@ -67,7 +67,7 @@ public class Main {
 		MapState cnot = MapState.CNOT();
 		MapState b = MapState.identity(2);
 		a.composeX(0);
-		b.composeXnew(0);
+		//b.composeXnew(0);
 		
 		
 		
