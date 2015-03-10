@@ -1,0 +1,6 @@
+input x ;    // Input one qubit
+output x ;   // Output the same qubit
+nil          // Stop
+
+
+

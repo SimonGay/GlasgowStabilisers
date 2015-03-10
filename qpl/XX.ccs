@@ -1,0 +1,1 @@
+input x,y,z . X(x) . X(x) . output x,y,z . nil

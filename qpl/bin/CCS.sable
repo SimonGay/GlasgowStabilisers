@@ -1,0 +1,78 @@
+
+Package equivalence ; 
+     
+Helpers 
+	digit = ['0' .. '9'];
+	letter = [['A' .. 'Z'] + ['a' .. 'z']];
+	space = ' ';
+    tab = 9;
+	cr = 13;
+	lf = 10;
+	graphic = [[32 .. 127] + tab];
+  
+Tokens 
+	parallel = '|' ;
+	dot = '.' ;
+	nil = 'nil' ;
+	semi = ';' ;
+	comma = ',' ;
+	bang = '!' ;
+	send = 'send' ;
+	query = '?' ;
+	receive = 'receive' ;
+	on = 'on' ;
+	x = 'X' ;
+	y = 'Y' ;
+	z = 'Z' ;
+	h = 'H' ;
+	cnot = 'CNOT' ;
+	measure = 'measure' ;
+	newqubit = 'newqubit' ;
+	if = 'if' ;
+	then = 'then' ;
+	else = 'else' ;
+	input = 'input' ;
+	output = 'output' ;
+	print = 'print' ;
+	assign = ':=' ;
+	lparen = '(' ;
+	rparen = ')' ;
+	intlit = digit digit* ;
+	blank = (space | tab | cr | lf)* ;
+	comment = '//' graphic* (cr | lf) ;
+    id = letter letter* ; // must be the last token
+
+Ignored Tokens
+	blank, comment ; 
+  
+Productions 
+	process 
+		= {term} term
+		| {parallel} [left]:term parallel [right]:term ;
+	
+	term
+		= {nil} nil
+		| {send} send [data]:id on [channel]:id sep term
+		| {receive} receive [data]:id on [channel]:id sep term
+		| {measure} [target]:id assign measure [source]:id sep term
+		| {x} x lparen id rparen sep term
+		| {y} y lparen id rparen sep term
+		| {z} z lparen id rparen sep term
+		| {h} h lparen id rparen sep term
+		| {cnot} cnot lparen [fst]:id comma [snd]:id rparen sep term
+		| {ifx} if [cond]:id then x lparen [target]:id rparen sep term
+		| {ify} if [cond]:id then y lparen [target]:id rparen sep term
+		| {ifz} if [cond]:id then z lparen [target]:id rparen sep term
+		| {new} newqubit id sep term
+		| {input} input idlist sep term
+		| {output} output idlist sep term
+		| {print} print id sep term
+		| {parens} lparen process rparen ;
+		
+	idlist
+		= {id} id
+		| {idcons} id comma idlist ;
+		
+	sep
+		= {dot} dot
+		| {semi} semi ;

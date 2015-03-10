@@ -1,0 +1,56 @@
+// The first process is an EPR source, which constructs an EPR pair
+// and sends the qubits on channels c and d.
+// Alice will receive on c, Bob will receive on d.
+
+// EPR source
+newqubit y ;    // A fresh qubit in state |0> 
+newqubit z ;    // Another fresh qubit in state |0>
+H(y) ;          // Apply Hadamard to put y into state |0> + |1>
+CNOT(y,z) ;     // Apply Controlled Not, to entangle y and z: state |00> + |11>
+(
+send y on c ; nil   // Send qubit y on channel c
+|
+send z on d ; nil   // Send qubit z on channel d
+)
+
+|
+
+// The next process is Alice, who inputs an unknown qubit and 
+// teleports it to Bob.
+// Alice receives her part of the EPR pair on channel c.
+// Alice uses channel b for classical communication, sending measurement
+// results to Bob.
+
+// Alice
+
+(
+input x ;       
+receive y on c ;           
+CNOT(x,y) ;     
+H(x) ;  
+(        
+m := measure x ; send m on a ; nil
+|
+n := measure y ; send n on b ; nil
+)
+
+|
+
+// The next process is Bob, who receives classical data from Alice
+// and uses it to transform his part of the EPR pair, in order to
+// recover the original unknown qubit that Alice had.
+
+// Bob
+
+receive w on d ;  // Receive part of the EPR pair on channel d
+receive m on a ;  // Receive first classical bit from Alice on channel b
+receive n on b ;  // Receive second classical bit from Alice on channel b
+if n then X(w) ;  // These two steps are the conditional transformations
+if m then Z(w) ;  // of Bob's part of the EPR pair, based on the classical data.
+output w ;        // Announce the recovered qubit
+nil               // Stop
+)
+
+
+
+
